@@ -25,7 +25,7 @@ function runTests() {
         logStart('Test: measureUnit Constructor with wrong params. Result: ');
         try {
             let unit = new measureUnit('This is a String');
-            logEnd('OK');
+            logEnd('FAIL! Exception not detected');
         } catch( e ) {
             if( e instanceof measureException ) {
                logEnd('OK! Controlled exception. "' + e.message + '"' );
@@ -40,7 +40,7 @@ function runTests() {
         try {
             let unit = new measureUnit( {name: []} );
             if( unit && typeof unit == "object" ) {
-                logEnd('OK');
+                logEnd('FAIL! Exception not detected');
             } else {
                 logEnd('Failed: unit is not an object (' + typeof unit + ')');
             }            
@@ -58,7 +58,7 @@ function runTests() {
         try {
             let unit = new measureUnit( {value: []} );
             if( unit && typeof unit == "object" ) {
-                logEnd('OK');
+                logEnd('FAIL! Exception not detected');
             }
         } catch( e ) {
             if( e instanceof measureException ) {
@@ -75,10 +75,24 @@ function runTests() {
             let unit = new measureUnit( {name: 'kilograms'} );
             logEnd('OK');
         } catch( e ) {
-            logEnd('FAIL!' + e.message );
+            logEnd('FAIL! ' + e.message );
         }
     }
 
+    let textMeasureUnitConstructorWithValue0 = function() {
+    	logStart('Text: measureUnitConstructor with value = 0. Result:');
+    	try {
+    		let unit = new measureUnit( {value: 0} );
+    		logEnd('FAIL! Exception not detected');
+    	} catch (e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controlled exception. "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+e.message);
+    		}
+    	}
+    }
+    
     let testMeasureUnitConstructorWithCorrectValue = function() {
         logStart('Test: measureUnitConstructor with correct name. Result :');
         try {
@@ -89,10 +103,86 @@ function runTests() {
         }
     }
 
+    let testMeasureUnitCollectionAppendNotAnUnit = function () {
+    	logStart('Test: measureUnitCollection append something that is not a measureUnit. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( {} );
+    		logEnd('FAIL! Exception not detected');
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controlled exception "'+e.message+'"');
+    		} else {
+    			logEnd('FAIL! '+e.message);
+    		}
+    	}
+    }
+    
+    let testMeasureUnitCollectionAppendUnit = function () {
+    	logStart('Test: measureUnitCollection append an unit. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000}));
+    		if( collection.count() == 1 ) {
+    			logEnd('OK!');
+    		} else {
+    			logEnd('FAIL! List should have one object and has ' + String(collection.count()));
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! ' + e.message );
+    	}
+    }
+    
+    let testeMeasureUnitCollectionAppendUnitTwice = function() {
+    	logStart('Test: measureUnitCollection append an unit TWICE. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		if( collection.count() != 1 ) {
+    			logEnd('FAIL! List should have one object and has ' + String(collection.count()));
+    			return false;
+    		}
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		if( collection.count() != 1 ) {
+    			logEnd('FAIL! List should have one object and has  ' + String(collection.count()));
+    			return false;
+    		}
+    		logEnd('OK!');
+    	} catch(e) {
+    		logEnd('FAIL! '+ e.message );
+    	}
+    }
+    
+    let testeMeasureUnitCollectionAppendUnitTwiceDifferentValues = function() {
+    	logStart('Test: measureUnitCollection append an unit TWICE with different values. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		if( collection.count() != 1 ) {
+    			logEnd('FAIL! List should have one object and has ' + String(collection.count()));
+    			return false;
+    		}
+    		collection.append( new measureUnit( {name: 'kilograms', value:5} ) );
+   			logEnd('FAIL! Appending an existing unit with different value must fail');
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controled exception "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+ e.message );
+    		}
+    	}
+    }
+    
     testMeasureUnitConstructorWithoutParams();
     testMeasureUnitConstructorWithWrongParams();    
     testMeasureUnitConstructorWithIncorrectName();
     testMeasureUnitConstructorWithIncorrectValue();
+    textMeasureUnitConstructorWithValue0();
     testMeasureUnitConstructorWithCorrectName();
     testMeasureUnitConstructorWithCorrectValue();
+    
+    testMeasureUnitCollectionAppendNotAnUnit();
+    testMeasureUnitCollectionAppendUnit();
+    testeMeasureUnitCollectionAppendUnitTwice();
+    testeMeasureUnitCollectionAppendUnitTwiceDifferentValues();
 }

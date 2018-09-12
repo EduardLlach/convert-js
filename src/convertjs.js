@@ -57,6 +57,7 @@ class measureUnit {
 
     set value( value ) {
         if( typeof value != "number" ) throw new measureException("Measure's value should be a Number");
+        if( value == 0 ) throw new measureException("Measure value cannot be 0");
         this._value = value;
     }
 
@@ -70,20 +71,72 @@ class measureUnitCollection {
         this._list = new Array();
     }
 
-    //find an unit by name. Ex: distances.find('kilometers')
+    /**
+     * returns the number of objects into the list+
+     * @return Number
+     */
+    count() {
+    	return this._list.length;
+    }
+    
+    /**
+     * find an unit by name. Ex: distances.find('kilometers')
+     * @param String measureName name of the measure we want to find
+     * @returns measureUnit or null if not found
+     */
     find( measureName ) {
         measureName = measureName.toLowerCase();
-        for( measure in this._list ) {
+        for( let measure of this._list ) {
+        	if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
             if( measureName == measure.name.toLowerCase() ) {
                 return measure;
             }
         }
+        return null;
     }
 
-    //set an unit. Ex: distances.append( new measureUnit( {name:'kilometers',value:1000} ) );
-    append( value ) {
-        if( !this.find(value.name) ) {
-            this._list.push( value );
+    /**
+     * Appends an unit to the list. Ex: distances.append( new measureUnit( {name:'kilometers',value:1000} ) );
+     * if the unit does not exists, simply add it
+     * if it exists and have the same value, omit it
+     * if it exists and have different value, we have a problem.
+     * 
+     * @param measureUnit unit to append
+     * @returns boolean true
+     **/
+    
+    append( unit ) {
+    	if( !(unit instanceof measureUnit) ) throw new measureException("You cannot append something that is not an unit");
+    	let existingMeasure = this.find(unit.name);
+        if( existingMeasure == null ) {
+            this._list.push( unit );
+        } else {
+        	if( existingMeasure.value != unit.value ) throw new measureException("Unit already exists and has a different value");
         }
     }
+}
+
+class measureConverter {
+	
+	constructor () {
+		this._distanceCollection = new measureCollection();
+		
+		this.populateDistanceUnits();
+	}
+	
+	function populateDistanceUnits() {
+		this._distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
+		this._distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
+		this._distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
+		this._distanceCollection.append( new measureUnit({name:'meters',value:1}) );
+		this._distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
+	}
+	
+	function convert(value, from, to) {
+		if( typeof value != "number" ) throw new measureException( "value is not a number" );
+		if( typeof from != "string" ) throw new measureException( "from is not a String");
+		if( typeof to != "string" ) throw new measureException( "to is not a String");
+		if( from == "" ) throw new measureException("from cannot be an empty string");
+		if( to == "" ) throw new measureException("to cannot be an empty string");
+	}
 }
