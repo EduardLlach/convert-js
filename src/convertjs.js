@@ -124,7 +124,7 @@ class measureConverter {
 		this.populateDistanceUnits();
 	}
 	
-	function populateDistanceUnits() {
+	populateDistanceUnits() {
 		this._distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
 		this._distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
 		this._distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
@@ -132,7 +132,7 @@ class measureConverter {
 		this._distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
 	}
 	
-	function convert(value, from, to) {
+	convert(value, from, to) {
 		if( typeof value != "number" ) throw new measureException( "value is not a number" );
 		if( typeof from != "string" ) throw new measureException( "from is not a String");
 		if( typeof to != "string" ) throw new measureException( "to is not a String");
