@@ -133,7 +133,7 @@ function runTests() {
     	}
     }
     
-    let testeMeasureUnitCollectionAppendUnitTwice = function() {
+    let testMeasureUnitCollectionAppendUnitTwice = function() {
     	logStart('Test: measureUnitCollection append an unit TWICE. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -153,7 +153,7 @@ function runTests() {
     	}
     }
     
-    let testeMeasureUnitCollectionAppendUnitTwiceDifferentValues = function() {
+    let testMeasureUnitCollectionAppendUnitTwiceDifferentValues = function() {
     	logStart('Test: measureUnitCollection append an unit TWICE with different values. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -171,6 +171,163 @@ function runTests() {
     			logEnd('FAIL! '+ e.message );
     		}
     	}
+    }
+    
+    let testMeasureUnitCollectionFindPair = function() {
+    	logStart('Test: measureUnitCollection find pair. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		if( collection.count() != 2 ) {
+    			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
+    			return false;
+    		}
+    		let pair = collection.findPair('kilograms','grams');
+    		if( pair == null ) {
+    			logEnd('FAIL! pair is null');
+    		} else {
+    			if( pair.from == null ) {
+    				logEnd('FAIL! pair.from is null');
+    			} else {
+    				if( pair.to == null ) {
+    					logEnd('FAIL! pair.to is null');
+    				} else {
+    					if( !(pair.from instanceof measureUnit) ) {
+    						logEnd('FAIL! pair.from is not a measureUnit');
+    					} else {
+    						if( !(pair.to instanceof measureUnit) ) {
+    							logEnd('FAIL! pair.to is not a measureUnit')
+    						} else {
+    							if(pair.from.name!='kilograms') {
+    								logEnd('FAIL! pair.from is not kilograms, is ' + pair.from.name );
+    							} else {
+    								if(pair.to.name!='grams') {
+    									logEnd('FAIL! pair.to is not kilograms, is ' + pair.to.name );
+    								} else {
+    									logEnd('OK! found the pair!');
+    								}
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controled exception "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+ e.message );
+    		}
+    	}
+    }
+    
+    let testMeasureItemCollectionFindPairFromNotFound = function () {
+    	logStart('Test: measureUnitCollection find pair. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		if( collection.count() != 2 ) {
+    			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
+    			return false;
+    		}
+    		let pair = collection.findPair('Tons','grams');
+    		if( pair == null ) {
+    			logEnd('FAIL! pair is null');
+    		} else {
+    			if( (pair.from == null) && (pair.to != null) && (pair.to instanceof measureUnit) && (pair.to.name == 'grams') ) {
+    				logEnd('OK! pair.from is null AND pair.to is measureUnit for grams');
+    			} else {
+    				if( pair.from != null ) {
+    					logEnd('FAIL! pair.from should be NULL and isn\'t');
+    				} else {
+    					if( pair.to == null ) {
+    						logEnd('FAIL! pair.to should be and object and is NULL');
+    					} else {
+    						if( !(pair.to instanceof measureUnit) ) {
+    							logEnd('FAIL! pair.to is not a measureUnit');
+    						} else {
+    							logEnd('FAIL! Something unexpected returned');
+    						}
+    					}
+    				}    				
+    			}
+    		}
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controled exception "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+ e.message );
+    		}
+    	}
+    }
+    
+    let testMeasureItemCollectionFindPairToNotFound = function() {
+    	logStart('Test: measureUnitCollection find pair. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		if( collection.count() != 2 ) {
+    			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
+    			return false;
+    		}
+    		let pair = collection.findPair('grams','Tons');
+    		if( pair == null ) {
+    			logEnd('FAIL! pair is null');
+    		} else {
+    			if( (pair.to == null) && (pair.from != null) && (pair.from instanceof measureUnit) && (pair.from.name == 'grams') ) {
+    				logEnd('OK! pair.to is null AND pair.from is measureUnit for grams');
+    			} else {
+    				if( pair.to != null ) {
+    					logEnd('FAIL! pair.to should be NULL and isn\'t');
+    				} else {
+    					if( pair.from == null ) {
+    						logEnd('FAIL! pair.from should be and object and is NULL');
+    					} else {
+    						if( !(pair.from instanceof measureUnit) ) {
+    							logEnd('FAIL! pair.from is not a measureUnit');
+    						} else {
+    							logEnd('FAIL! Something unexpected returned');
+    						}
+    					}
+    				}    				
+    			}
+    		}
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('OK! Controled exception "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+ e.message );
+    		}
+    	}
+    }
+    
+    let testMeasureConverterCreate = function() {
+    	logStart('Test: Create measureConverter. Result: ');
+    	try {
+    		let mConverter = new measureConverter();
+    		if( !("collections" in mConverter) ) {
+    			logEnd('FAIL! Collections is not created');
+    		} else {
+    			if( Object.keys(mConverter.collections).length == 0 ) {
+    				logEnd('FAIL! No collections created');
+    			} else {
+    				if( !(mConverter.findCollection("distanceCollection")) ) {
+    					logEnd('FAIL! distanceCollection is not created');
+    				} else {
+    					if( !(mConverter.findCollection("weightCollection") ) ) {
+    						logEnd('FAIL! weightCollection is not created');
+    					} else {
+    						logEnd('OK!');
+    					}
+    				}
+    			}
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}    	
     }
     
     let testConvertKgtoGr = function() {
@@ -197,8 +354,13 @@ function runTests() {
     
     testMeasureUnitCollectionAppendNotAnUnit();
     testMeasureUnitCollectionAppendUnit();
-    testeMeasureUnitCollectionAppendUnitTwice();
-    testeMeasureUnitCollectionAppendUnitTwiceDifferentValues();
+    testMeasureUnitCollectionAppendUnitTwice();
+    testMeasureUnitCollectionAppendUnitTwiceDifferentValues();
+    testMeasureItemCollectionFindPairFromNotFound();
+    testMeasureItemCollectionFindPairToNotFound();
+    testMeasureUnitCollectionFindPair();
+    
+    testMeasureConverterCreate();
     
     testConvertKgtoGr();
 }

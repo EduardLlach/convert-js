@@ -67,7 +67,8 @@ class measureUnit {
  * A group of measures
  */
 class measureUnitCollection {
-    constructor () {
+    constructor (name) {
+    	this.name = name;
         this._list = new Array();
     }
 
@@ -102,11 +103,11 @@ class measureUnitCollection {
      * @returns Object {from: measureUnit; to: measureUnit}
      */
     findPair( measureNameFrom, measureNameTo ) {    	
-    	let measureNameFromStr = measureName.toLowerCase();
-    	let measureNameToStr   = measureName.toLowerCase();
+    	let measureNameFromStr = measureNameFrom.toLowerCase();
+    	let measureNameToStr   = measureNameTo.toLowerCase();
     	let result = {from:null,to:null};
     	
-    	for( let mesure of this._list ) {
+    	for( let measure of this._list ) {
     		if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
     		let currentMeasure = measure.name.toLowerCase();
     		if( measureNameFromStr == currentMeasure ) {
@@ -115,7 +116,7 @@ class measureUnitCollection {
     			result.to = measure;
     		}
     		
-    		if( (result.from!=null) && (restul.to!=null)) {
+    		if( (result.from!=null) && (result.to!=null)) {
     			return result;
     		}
     	}
@@ -146,25 +147,43 @@ class measureUnitCollection {
 
 class measureConverter {
 	
-	constructor () {
+	append( name ) {
+		if( !this.findCollection(name) ) {
+			this.collections.push( new measureUnitCollection(name) );
+		} else {
+			throw new measureException("collection already exists");
+		}
+	}
+	
+	findCollection( name ) {
+		for( let collection of this.collections ) {
+			if( collection.name == name ) return collection;
+		}
+		
+		return false;
+	}
+	
+	constructor() {
 		this.collections = new Array();
-		this.collections['distanceCollection'] = new measureUnitCollection();
-		this.collections['weightCollection'] = new measureUnitCollection();
+		this.append( 'distanceCollection' );
+		this.append( 'weightCollection' );	
 		
 		this.populateDistanceUnits();
 	}
 	
 	populateDistanceUnits() {
-		this.collections.distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
-		this.collections.distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
-		this.collections.distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
-		this.collections.distanceCollection.append( new measureUnit({name:'meters',value:1}) );
-		this.collections.distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
+		let distanceCollection = this.findCollection('distanceCollection');
+		distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
+		distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
+		distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
+		distanceCollection.append( new measureUnit({name:'meters',value:1}) );
+		distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
 	}
 	
 	populateWeightUnits() {
-		this.collections.weightCollection.append( new measureUnit({name:'grams',value:1}))
-		this.collections.weightCollection.append( new measureUnit({name:'kilograms',value:1000}));		
+		let weightCollection = this.findCollection('weightCollection');
+		weightCollection.append( new measureUnit({name:'grams',value:1}))
+		weightCollection.append( new measureUnit({name:'kilograms',value:1000}));		
 	}
 	
 	convert(value, from, to) {
