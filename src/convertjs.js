@@ -85,14 +85,42 @@ class measureUnitCollection {
      * @returns measureUnit or null if not found
      */
     find( measureName ) {
-        measureName = measureName.toLowerCase();
+        let measureNameStr = measureName.toLowerCase();
         for( let measure of this._list ) {
         	if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
-            if( measureName == measure.name.toLowerCase() ) {
+            if( measureNameStr == measure.name.toLowerCase() ) {
                 return measure;
             }
         }
         return null;
+    }
+    
+    /**
+     * Finds a pair of measures in the list
+     * @param String measureNameFrom name of the firstMeasure
+     * @param String measureNameTo name of the secondMeasure
+     * @returns Object {from: measureUnit; to: measureUnit}
+     */
+    findPair( measureNameFrom, measureNameTo ) {    	
+    	let measureNameFromStr = measureName.toLowerCase();
+    	let measureNameToStr   = measureName.toLowerCase();
+    	let result = {from:null,to:null};
+    	
+    	for( let mesure of this._list ) {
+    		if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
+    		let currentMeasure = measure.name.toLowerCase();
+    		if( measureNameFromStr == currentMeasure ) {
+    			result.from = measure;
+    		} else if (measureNameToStr == currentMeasure ) {
+    			result.to = measure;
+    		}
+    		
+    		if( (result.from!=null) && (restul.to!=null)) {
+    			return result;
+    		}
+    	}
+    	
+    	return result;
     }
 
     /**
@@ -119,17 +147,24 @@ class measureUnitCollection {
 class measureConverter {
 	
 	constructor () {
-		this._distanceCollection = new measureCollection();
+		this.collections = new Array();
+		this.collections['distanceCollection'] = new measureUnitCollection();
+		this.collections['weightCollection'] = new measureUnitCollection();
 		
 		this.populateDistanceUnits();
 	}
 	
 	populateDistanceUnits() {
-		this._distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
-		this._distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
-		this._distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
-		this._distanceCollection.append( new measureUnit({name:'meters',value:1}) );
-		this._distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
+		this.collections.distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
+		this.collections.distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
+		this.collections.distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
+		this.collections.distanceCollection.append( new measureUnit({name:'meters',value:1}) );
+		this.collections.distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
+	}
+	
+	populateWeightUnits() {
+		this.collections.weightCollection.append( new measureUnit({name:'grams',value:1}))
+		this.collections.weightCollection.append( new measureUnit({name:'kilograms',value:1000}));		
 	}
 	
 	convert(value, from, to) {
@@ -138,5 +173,38 @@ class measureConverter {
 		if( typeof to != "string" ) throw new measureException( "to is not a String");
 		if( from == "" ) throw new measureException("from cannot be an empty string");
 		if( to == "" ) throw new measureException("to cannot be an empty string");
+		
+		//try to find a matching pair
+		let pair = null;
+		for( let collection of this.collections ) {
+			if( !(collection instanceof measureUnitCollection) ) throw new Exception("found something that is not a collection");
+			
+			pair = collection.findPair(from,to);
+			
+			if( pair==null ) throw new measureException("measures not found");
+			if( pair.from != null || pair.to != null ) {
+				if( pair.from == null ) {
+					throw new measureException("Measure 'from' unknown or non-matching dimensions");
+				} else {
+					if( pair.to == null ) {
+						throw new measureException("Measure 'to' unknown or non-matching dimensions");
+					} else {
+						break;
+					}
+				}
+			}
+		}
+
+		if( pair != null && pair.from != null && pair.to != null ) {
+			return value * (pair.from.value / pair.to.value);
+		} else {
+			throw new measureException("Non-matching dimensions or dimensions unknown")
+		}
+			
 	}
+}
+
+function convert( value, from, to ) {
+	let mConverter = new measureConverter();
+	return mConverter.convert(value,from,to);
 }

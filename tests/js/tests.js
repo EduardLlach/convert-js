@@ -173,6 +173,20 @@ function runTests() {
     	}
     }
     
+    let testConvertKgtoGr = function() {
+    	logStart('Test: testConvertKgtoGr. Result: ');
+    	try {
+    		let result = convert( 1, 'kilograms', 'grams' );
+    		if(result==1000) {
+    			logEnd('OK! 1 kilograms == 1000 grams');
+    		} else {
+    			logEnd('FAIL! 1 kilograms = ' + String(result) + ' grams');
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
+    
     testMeasureUnitConstructorWithoutParams();
     testMeasureUnitConstructorWithWrongParams();    
     testMeasureUnitConstructorWithIncorrectName();
@@ -185,4 +199,6 @@ function runTests() {
     testMeasureUnitCollectionAppendUnit();
     testeMeasureUnitCollectionAppendUnitTwice();
     testeMeasureUnitCollectionAppendUnitTwiceDifferentValues();
+    
+    testConvertKgtoGr();
 }
