@@ -30,11 +30,15 @@ class measureUnit {
     constructor ( properties ) {
         this._name = '';
         this._value = 0;
+        this._altToBase = null;
+        this._altFromBase = null;
 
         if( properties ) {
             if( typeof properties == "object" ) {
                 if( "name" in properties ) this.name = properties.name;
                 if( "value" in properties ) this.value = properties.value;
+                if( "toBase" in properties ) this._altToBase = properties.toBase;
+                if( "fromBase" in properties ) this._altFromBase = properties.fromBase;
             } else {
                 throw new measureException("measureUnit constructor param should be an object");
             }
@@ -61,6 +65,27 @@ class measureUnit {
         this._value = value;
     }
 
+    /**
+     * Converts AVALUE units to BASE units
+     */
+    toBase (aValue) {
+    	if( this._altToBase ) {
+    		return this._altToBase( aValue );
+    	} else {
+    		return aValue * this._value;
+    	}
+    }
+    
+    /**
+     * Converts AVALUE base units to current units
+     */
+    fromBase(aValue) {
+    	if( this._altFromBase ) {
+    		return this._altFromBase( aValue );
+    	} else {
+    		return aValue / this._value;
+    	}
+    }
 }
 
 /**
@@ -167,9 +192,13 @@ class measureConverter {
 		this.collections = new Array();
 		this.append( 'distanceCollection' );
 		this.append( 'weightCollection' );	
+		this.append( 'volumeCollection' );
+		this.append( 'temperatureCollection' );
 		
 		this.populateDistanceUnits();
 		this.populateWeightUnits();
+		this.populateVolumeUnits();
+		this.populateTemperatureUnits();
 	}
 	
 	populateDistanceUnits() {
@@ -196,6 +225,30 @@ class measureConverter {
 	populateVolumeUnits() {
 		let volumeCollection = this.findCollection('volumeCollection');
 		volumeCollection.append( new measureUnit({name:'liters',value:1} ) );
+		volumeCollection.append( new measureUnit({name:'cubic metres',value:1000}));
+	}
+	
+	populateTemperatureUnits() {
+		const temperatureCollection = this.findCollection('temperatureCollection');
+		temperatureCollection.append( new measureUnit({name:'centigrades',value:1}));
+		temperatureCollection.append( new measureUnit({
+				name:'farenheit',
+				toBase: function (aValue) {
+					return (aValue-32) * (5/9);
+				},
+				fromBase: function (aValue) {
+					return (aValue * 9/5) + 32;
+				}
+			}));
+		temperatureCollection.append( new measureUnit({
+			name:'kelvin',
+			toBase: function (aValue) {
+				return aValue - 273.15;
+			},
+			fromBase: function (aValue) {
+				return aValue + 273.15;
+			}
+		}));
 	}
 	
 	convert(value, from, to) {
@@ -227,7 +280,7 @@ class measureConverter {
 		}
 
 		if( (pair != null) && (pair.from != null) && (pair.to != null) ) {
-			return value * (pair.from.value / pair.to.value);
+			return pair.to.fromBase( pair.from.toBase( value ) );
 		} else {
 			if( pair==null ) {
 				throw new measureException("Something happened and we didn't searched the collections")

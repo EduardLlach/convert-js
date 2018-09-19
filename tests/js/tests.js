@@ -341,15 +341,85 @@ function runTests() {
     		logEnd('FAIL! Exception ' + e.message );
     	}  
     }
+  
+    const testConvertDistance = function() {
+    	logStart('Test: convert distance measures. Result: ');
+    	try {
+    		let result = convert( 1, 'kilometers', 'meters' );
+    		if(result==1000) {
+    			logEnd('OK! 1 kilometers == 1000 meters');
+    		} else {
+    			logEnd(`FAIL! 1 kilometers = ${result} meters`);
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
     
-    const testConvertKgtoGr = function() {
-    	logStart('Test: testConvertKgtoGr. Result: ');
+    const testConvertWeight = function() {
+    	logStart('Test: convert Weight measures. Result: ');
     	try {
     		let result = convert( 1, 'kilograms', 'grams' );
     		if(result==1000) {
     			logEnd('OK! 1 kilograms == 1000 grams');
     		} else {
-    			logEnd('FAIL! 1 kilograms = ' + String(result) + ' grams');
+    			logEnd(`FAIL! 1 kilograms = ${result} grams`);
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
+    
+    const testConvertVolume = function() {
+    	logStart('Test: convert volume measures. Result: ');
+    	try {
+    		let result = convert( 1, 'liters', 'cubic metres' );
+    		if(result==0.001) {
+    			logEnd('OK! 1 liters == 0.001 cubic metres');
+    		} else {
+    			logEnd(`FAIL! 1 litres = ${result} cubic metres`);
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
+    
+    const testConvertTemperature = function() {
+    	logStart('Test: convert temperature measures. Result: ');
+    	try {
+    		let result = convert( 25, 'centigrades', 'farenheit' );
+    		if(result==77) {
+    			logEnd('OK! 25º centrigrades == 77º farenheit');
+    		} else {
+    			logEnd(`FAIL! 25º centrigrades = ${result} farenheit`);
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
+    
+    const testConvertTemperatureReverse = function() {
+    	logStart('Test: convert temperature measures in reverse. Result: ');
+    	try {
+    		let result = convert( 77, 'farenheit', 'centigrades' );
+    		if(result==25) {
+    			logEnd('OK! 77º farenheit == 25º centigrades');
+    		} else {
+    			logEnd(`FAIL! 77º farenheit = ${result} centigrades`);
+    		}
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}
+    }
+    
+    const testConvertTemperatureKelvin = function() {
+    	logStart('Test: convert temperature measures in kelvin. Result: ');
+    	try {
+    		let result = convert( 77, 'farenheit', 'kelvin' );
+    		if(result==298.15) {
+    			logEnd('OK! 77º farenheit == 25º centigrades == 298.15 kelvin');
+    		} else {
+    			logEnd(`FAIL! 77º farenheit = ${result} centigrades`);
     		}
     	} catch(e) {
     		logEnd('FAIL! Exception ' + e.message );
@@ -375,5 +445,10 @@ function runTests() {
     testMeasureConverterCreate();
     testConvertInClass();
     
-    testConvertKgtoGr();
+    testConvertDistance();
+    testConvertWeight();
+    testConvertVolume();
+    testConvertTemperature();
+    testConvertTemperatureReverse();
+    testConvertTemperatureKelvin();
 }

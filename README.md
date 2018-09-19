@@ -28,6 +28,27 @@ miles = convertjs( 10, 'kilometers', 'miles' );
  3. This would be enough for most units, but not all. Conversion from Farenheit to Celsius or Kelvin requires a formula.
  
 ## Version goals
-* v0.1 - not reached - Basic functional system with International System units and Imperial Units for Weight, Distance and Volume.
-* v0.2 - not reached - Use of formulas ( for Farenheit )
-* v0.3 - not reached - Adding more things to convert ...
+* v0.1 - reached 2018.09.19 - Basic functional system with International System units and some Imperial Units for Weight, Distance and Volume.
+* v0.2 - reached 2018.09.19 - Use of formulas to calculate proportions.
+    * __distance__
+        * milimeters
+        * centimeters
+        * decimeters
+        * meters
+        * kilometers
+    * __volume__
+        * liters
+        * cubic meters
+    * __weight__
+        * miligrams
+        * centigrams
+        * decigrams
+        * grams
+        * kilograms
+        * ton
+    * __temperature__
+        * centigrades
+        * farenheit
+        * kelvin
+    
+* v0.3 - not reached - Adding sinonims. Eg: g = = gr = = grams.
