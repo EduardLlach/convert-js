@@ -28,7 +28,7 @@ class measureUnit {
     //var value: Value respect a base Unit
 
     constructor ( properties ) {
-        this._name = '';
+        this._name = new Array();
         this._value = 0;
         this._altToBase = null;
         this._altFromBase = null;
@@ -50,8 +50,8 @@ class measureUnit {
     }
 
     set name( name ) {
-        if( typeof name != "string" ) throw new measureException("Name must be a String");
-        if( name == "" ) throw new measureException("Measure's name should not be Empty");
+        if( !Array.isArray( name ) ) throw new measureException("Name must be an array");
+        if( name.length == 0 ) throw new measureException("Measure's name should not be Empty");
         this._name = name;
     }
 
@@ -64,18 +64,7 @@ class measureUnit {
         if( value == 0 ) throw new measureException("Measure value cannot be 0");
         this._value = value;
     }
-
-    /**
-     * Converts AVALUE units to BASE units
-     */
-    toBase (aValue) {
-    	if( this._altToBase ) {
-    		return this._altToBase( aValue );
-    	} else {
-    		return aValue * this._value;
-    	}
-    }
-    
+   
     /**
      * Converts AVALUE base units to current units
      */
@@ -86,12 +75,58 @@ class measureUnit {
     		return aValue / this._value;
     	}
     }
+    
+    /**
+     * returns TRUE if the name is one of supported names
+     * case-insensitive search
+     * @return bool True if we have a match, false otherwise
+     */
+    match( aName ) {
+    	return this._name.indexOf( aName.toLowerCase() ) >= 0;
+    }
+    
+    /**
+     * Converts AVALUE units to BASE units
+     */
+    toBase (aValue) {
+    	if( this._altToBase ) {
+    		return this._altToBase( aValue );
+    	} else {
+    		return aValue * this._value;
+    	}
+    }
 }
 
 /**
  * A group of measures
  */
 class measureUnitCollection {
+	
+    /**
+     * Appends an unit to the list. Ex: distances.append( new measureUnit( {name:'kilometers',value:1000} ) );
+     * if the unit does not exists, simply add it
+     * if it exists and have the same value, omit it
+     * if it exists and have different value, we have a problem.
+     * 
+     * @param measureUnit unit to append
+     * @returns boolean true
+     **/
+    
+    append( unit ) {
+    	if( !(unit instanceof measureUnit) ) throw new measureException("You cannot append something that is not an unit");
+    	let existingMeasure = null;
+    	for( let aName of unit.name ) {
+    		existingMeasure = this.find(aName);
+    		if(existingMeasure!=null) break;
+    	}
+    	
+        if( existingMeasure == null ) {
+            this._list.push( unit );
+        } else {
+        	if( existingMeasure.value != unit.value ) throw new measureException(`Unit already exists and has a different value ${existingMeasure.value} vs ${unit.value}`);
+        }
+    }
+    
     constructor (name) {
     	this.name = name;
         this._list = new Array();
@@ -111,10 +146,9 @@ class measureUnitCollection {
      * @returns measureUnit or null if not found
      */
     find( measureName ) {
-        let measureNameStr = measureName.toLowerCase();
         for( let measure of this._list ) {
         	if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
-            if( measureNameStr == measure.name.toLowerCase() ) {
+            if( measure.match( measureName ) ) {
                 return measure;
             }
         }
@@ -128,16 +162,14 @@ class measureUnitCollection {
      * @returns Object {from: measureUnit; to: measureUnit}
      */
     findPair( measureNameFrom, measureNameTo ) {    	
-    	let measureNameFromStr = measureNameFrom.toLowerCase();
-    	let measureNameToStr   = measureNameTo.toLowerCase();
     	let result = {from:null,to:null};
     	
     	for( let measure of this._list ) {
     		if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
-    		let currentMeasure = measure.name.toLowerCase();
-    		if( measureNameFromStr == currentMeasure ) {
+    		//TODO this code will never match if the units are the same
+    		if( measure.match( measureNameFrom ) ) {
     			result.from = measure;
-    		} else if (measureNameToStr == currentMeasure ) {
+    		} else if ( measure.match( measureNameTo ) ) {
     			result.to = measure;
     		}
     		
@@ -148,28 +180,12 @@ class measureUnitCollection {
     	
     	return result;
     }
-
-    /**
-     * Appends an unit to the list. Ex: distances.append( new measureUnit( {name:'kilometers',value:1000} ) );
-     * if the unit does not exists, simply add it
-     * if it exists and have the same value, omit it
-     * if it exists and have different value, we have a problem.
-     * 
-     * @param measureUnit unit to append
-     * @returns boolean true
-     **/
-    
-    append( unit ) {
-    	if( !(unit instanceof measureUnit) ) throw new measureException("You cannot append something that is not an unit");
-    	let existingMeasure = this.find(unit.name);
-        if( existingMeasure == null ) {
-            this._list.push( unit );
-        } else {
-        	if( existingMeasure.value != unit.value ) throw new measureException("Unit already exists and has a different value");
-        }
-    }
 }
 
+/**
+ * The main class of the measure Converter
+ * Creates the collections of units and does conversions
+ */
 class measureConverter {
 	
 	append( name ) {
@@ -182,7 +198,7 @@ class measureConverter {
 	
 	findCollection( name ) {
 		for( let collection of this.collections ) {
-			if( collection.name == name ) return collection;
+			if( collection.name.toLowerCase() == name.toLowerCase() ) return collection;
 		}
 		
 		return false;
@@ -203,36 +219,36 @@ class measureConverter {
 	
 	populateDistanceUnits() {
 		let distanceCollection = this.findCollection('distanceCollection');
-		distanceCollection.append( new measureUnit({name:'milimeters',value:0.001}) );
-		distanceCollection.append( new measureUnit({name:'centimeters',value:0.01}) );
-		distanceCollection.append( new measureUnit({name:'decimeters',value:0.1}) );
-		distanceCollection.append( new measureUnit({name:'meters',value:1}) );
-		distanceCollection.append( new measureUnit({name:'kilometers',value:1000}) );
+		distanceCollection.append( new measureUnit({name:['milimeter','milimeters','mm'],value:0.001}) );
+		distanceCollection.append( new measureUnit({name:['centimeter','centimeters','cm'],value:0.01}) );
+		distanceCollection.append( new measureUnit({name:['decimeter','decimeters','dm'],value:0.1}) );
+		distanceCollection.append( new measureUnit({name:['meter','meters','m'],value:1}) );
+		distanceCollection.append( new measureUnit({name:['kilometer','kilometers','km'],value:1000}) );
 	}
 	
 	populateWeightUnits() {
 		let weightCollection = this.findCollection('weightCollection');
-		weightCollection.append( new measureUnit({name:'miligrams',value:0.001}));
-		weightCollection.append( new measureUnit({name:'centigrams',value:0.01}));
-		weightCollection.append( new measureUnit({name:'decigrams',value:0.1}));
-		weightCollection.append( new measureUnit({name:'grams',value:1}));
-		weightCollection.append( new measureUnit({name:'decagrams',value:10}));
-		weightCollection.append( new measureUnit({name:'hectograms',value:10}));
-		weightCollection.append( new measureUnit({name:'kilograms',value:1000}));
-		weightCollection.append( new measureUnit({name:'ton',value:1000000}));
+		weightCollection.append( new measureUnit({name:['miligram','miligrams','mg','mgr'],value:0.001}));
+		weightCollection.append( new measureUnit({name:['centigram','centigrams','cg','cgr'],value:0.01}));
+		weightCollection.append( new measureUnit({name:['decigram','decigrams','dg','dgr'],value:0.1}));
+		weightCollection.append( new measureUnit({name:['gram','grams','g','gr'],value:1}));
+		weightCollection.append( new measureUnit({name:['decagram','decagrams'],value:10}));
+		weightCollection.append( new measureUnit({name:['hectogram','hectograms'],value:10}));
+		weightCollection.append( new measureUnit({name:['kilogram','kilograms','kg','kgr'],value:1000}));
+		weightCollection.append( new measureUnit({name:['ton','tons','tm'],value:1000000}));
 	}
 	
 	populateVolumeUnits() {
 		let volumeCollection = this.findCollection('volumeCollection');
-		volumeCollection.append( new measureUnit({name:'liters',value:1} ) );
-		volumeCollection.append( new measureUnit({name:'cubic metres',value:1000}));
+		volumeCollection.append( new measureUnit({name:['liter','liters','litre','litres','l'],value:1} ) );
+		volumeCollection.append( new measureUnit({name:['cubic meter','cubic metres','m3','m^3','m³'],value:1000}));
 	}
 	
 	populateTemperatureUnits() {
 		const temperatureCollection = this.findCollection('temperatureCollection');
-		temperatureCollection.append( new measureUnit({name:'centigrades',value:1}));
+		temperatureCollection.append( new measureUnit({name:['centigrade','centigrades','celsius','c','ºc'],value:1}));
 		temperatureCollection.append( new measureUnit({
-				name:'farenheit',
+				name:['farenheit','f','ºf'],
 				toBase: function (aValue) {
 					return (aValue-32) * (5/9);
 				},
@@ -241,7 +257,7 @@ class measureConverter {
 				}
 			}));
 		temperatureCollection.append( new measureUnit({
-			name:'kelvin',
+			name:['kelvin','k','ºk'],
 			toBase: function (aValue) {
 				return aValue - 273.15;
 			},
@@ -280,6 +296,7 @@ class measureConverter {
 		}
 
 		if( (pair != null) && (pair.from != null) && (pair.to != null) ) {
+			//TODO if pair.to is the same than pair.from, skip conversion
 			return pair.to.fromBase( pair.from.toBase( value ) );
 		} else {
 			if( pair==null ) {

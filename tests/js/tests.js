@@ -72,7 +72,7 @@ function runTests() {
     const testMeasureUnitConstructorWithCorrectName = function() {
         logStart('Test: measureUnitConstructor with correct name. Result :');
         try {
-            let unit = new measureUnit( {name: 'kilograms'} );
+            let unit = new measureUnit( {name: ['kilograms']} );
             logEnd('OK');
         } catch( e ) {
             logEnd('FAIL! ' + e.message );
@@ -122,7 +122,7 @@ function runTests() {
     	logStart('Test: measureUnitCollection append an unit. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000}));
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000}));
     		if( collection.count() == 1 ) {
     			logEnd('OK!');
     		} else {
@@ -137,12 +137,12 @@ function runTests() {
     	logStart('Test: measureUnitCollection append an unit TWICE. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
     		if( collection.count() != 1 ) {
     			logEnd('FAIL! List should have one object and has ' + String(collection.count()));
     			return false;
     		}
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
     		if( collection.count() != 1 ) {
     			logEnd('FAIL! List should have one object and has  ' + String(collection.count()));
     			return false;
@@ -157,12 +157,12 @@ function runTests() {
     	logStart('Test: measureUnitCollection append an unit TWICE with different values. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
     		if( collection.count() != 1 ) {
     			logEnd('FAIL! List should have one object and has ' + String(collection.count()));
     			return false;
     		}
-    		collection.append( new measureUnit( {name: 'kilograms', value:5} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:5} ) );
    			logEnd('FAIL! Appending an existing unit with different value must fail');
     	} catch(e) {
     		if( e instanceof measureException ) {
@@ -425,6 +425,9 @@ function runTests() {
     		logEnd('FAIL! Exception ' + e.message );
     	}
     }
+    
+    //TODO test measureUnits if is the same unit with different name
+    //TODO test different names
     
     testMeasureUnitConstructorWithoutParams();
     testMeasureUnitConstructorWithWrongParams();    
