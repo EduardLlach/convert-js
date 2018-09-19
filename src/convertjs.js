@@ -169,6 +169,7 @@ class measureConverter {
 		this.append( 'weightCollection' );	
 		
 		this.populateDistanceUnits();
+		this.populateWeightUnits();
 	}
 	
 	populateDistanceUnits() {
@@ -182,8 +183,19 @@ class measureConverter {
 	
 	populateWeightUnits() {
 		let weightCollection = this.findCollection('weightCollection');
-		weightCollection.append( new measureUnit({name:'grams',value:1}))
-		weightCollection.append( new measureUnit({name:'kilograms',value:1000}));		
+		weightCollection.append( new measureUnit({name:'miligrams',value:0.001}));
+		weightCollection.append( new measureUnit({name:'centigrams',value:0.01}));
+		weightCollection.append( new measureUnit({name:'decigrams',value:0.1}));
+		weightCollection.append( new measureUnit({name:'grams',value:1}));
+		weightCollection.append( new measureUnit({name:'decagrams',value:10}));
+		weightCollection.append( new measureUnit({name:'hectograms',value:10}));
+		weightCollection.append( new measureUnit({name:'kilograms',value:1000}));
+		weightCollection.append( new measureUnit({name:'ton',value:1000000}));
+	}
+	
+	populateVolumeUnits() {
+		let volumeCollection = this.findCollection('volumeCollection');
+		volumeCollection.append( new measureUnit({name:'liters',value:1} ) );
 	}
 	
 	convert(value, from, to) {
@@ -214,10 +226,14 @@ class measureConverter {
 			}
 		}
 
-		if( pair != null && pair.from != null && pair.to != null ) {
+		if( (pair != null) && (pair.from != null) && (pair.to != null) ) {
 			return value * (pair.from.value / pair.to.value);
 		} else {
-			throw new measureException("Non-matching dimensions or dimensions unknown")
+			if( pair==null ) {
+				throw new measureException("Something happened and we didn't searched the collections")
+			} else {
+				throw new measureException("Non-matching dimensions or dimensions unknown")
+			}
 		}
 			
 	}

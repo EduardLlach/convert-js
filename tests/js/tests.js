@@ -11,7 +11,7 @@ function runTests() {
         log( message + '</p>' );
     }
 
-    let testMeasureUnitConstructorWithoutParams = function() {
+    const testMeasureUnitConstructorWithoutParams = function() {
         logStart('Test: measureUnit Constructor without params. Result: ');
         try {
             let unit = new measureUnit();
@@ -21,7 +21,7 @@ function runTests() {
         }
     }
 
-    let testMeasureUnitConstructorWithWrongParams = function() {
+    const testMeasureUnitConstructorWithWrongParams = function() {
         logStart('Test: measureUnit Constructor with wrong params. Result: ');
         try {
             let unit = new measureUnit('This is a String');
@@ -35,7 +35,7 @@ function runTests() {
         }
     }
 
-    let testMeasureUnitConstructorWithIncorrectName = function() {
+    const testMeasureUnitConstructorWithIncorrectName = function() {
         logStart('Test: measureUnitConstructor with incorrect name. Result :');
         try {
             let unit = new measureUnit( {name: []} );
@@ -53,7 +53,7 @@ function runTests() {
         }  
     }
 
-    let testMeasureUnitConstructorWithIncorrectValue = function() {
+    const testMeasureUnitConstructorWithIncorrectValue = function() {
         logStart('Test: measureUnitConstructor with incorrect value. Result :');
         try {
             let unit = new measureUnit( {value: []} );
@@ -69,7 +69,7 @@ function runTests() {
         }          
     }
 
-    let testMeasureUnitConstructorWithCorrectName = function() {
+    const testMeasureUnitConstructorWithCorrectName = function() {
         logStart('Test: measureUnitConstructor with correct name. Result :');
         try {
             let unit = new measureUnit( {name: 'kilograms'} );
@@ -79,7 +79,7 @@ function runTests() {
         }
     }
 
-    let textMeasureUnitConstructorWithValue0 = function() {
+    const textMeasureUnitConstructorWithValue0 = function() {
     	logStart('Text: measureUnitConstructor with value = 0. Result:');
     	try {
     		let unit = new measureUnit( {value: 0} );
@@ -93,7 +93,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureUnitConstructorWithCorrectValue = function() {
+    const testMeasureUnitConstructorWithCorrectValue = function() {
         logStart('Test: measureUnitConstructor with correct name. Result :');
         try {
             let unit = new measureUnit( {value: 10} );
@@ -103,7 +103,7 @@ function runTests() {
         }
     }
 
-    let testMeasureUnitCollectionAppendNotAnUnit = function () {
+    const testMeasureUnitCollectionAppendNotAnUnit = function () {
     	logStart('Test: measureUnitCollection append something that is not a measureUnit. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -118,7 +118,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureUnitCollectionAppendUnit = function () {
+    const testMeasureUnitCollectionAppendUnit = function () {
     	logStart('Test: measureUnitCollection append an unit. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -133,7 +133,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureUnitCollectionAppendUnitTwice = function() {
+    const testMeasureUnitCollectionAppendUnitTwice = function() {
     	logStart('Test: measureUnitCollection append an unit TWICE. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -153,7 +153,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureUnitCollectionAppendUnitTwiceDifferentValues = function() {
+    const testMeasureUnitCollectionAppendUnitTwiceDifferentValues = function() {
     	logStart('Test: measureUnitCollection append an unit TWICE with different values. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -173,7 +173,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureUnitCollectionFindPair = function() {
+    const testMeasureUnitCollectionFindPair = function() {
     	logStart('Test: measureUnitCollection find pair. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -222,7 +222,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureItemCollectionFindPairFromNotFound = function () {
+    const testMeasureItemCollectionFindPairFromNotFound = function () {
     	logStart('Test: measureUnitCollection find pair. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -263,7 +263,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureItemCollectionFindPairToNotFound = function() {
+    const testMeasureItemCollectionFindPairToNotFound = function() {
     	logStart('Test: measureUnitCollection find pair. Result: ');
     	try {
     		let collection = new measureUnitCollection();
@@ -304,7 +304,7 @@ function runTests() {
     	}
     }
     
-    let testMeasureConverterCreate = function() {
+    const testMeasureConverterCreate = function() {
     	logStart('Test: Create measureConverter. Result: ');
     	try {
     		let mConverter = new measureConverter();
@@ -330,7 +330,19 @@ function runTests() {
     	}    	
     }
     
-    let testConvertKgtoGr = function() {
+    const testConvertInClass = function() {
+    	logStart('Test: Create measureConverter. Result: ');
+    	try {
+    		let mConverter = new measureConverter();
+    		let result = mConverter.convert( 1,'meters','kilometers');
+    		
+    		logEnd(`OK! 1 meters = ${result} kilometers`)
+    	} catch(e) {
+    		logEnd('FAIL! Exception ' + e.message );
+    	}  
+    }
+    
+    const testConvertKgtoGr = function() {
     	logStart('Test: testConvertKgtoGr. Result: ');
     	try {
     		let result = convert( 1, 'kilograms', 'grams' );
@@ -361,6 +373,7 @@ function runTests() {
     testMeasureUnitCollectionFindPair();
     
     testMeasureConverterCreate();
+    testConvertInClass();
     
     testConvertKgtoGr();
 }
