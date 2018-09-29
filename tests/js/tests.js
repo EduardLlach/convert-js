@@ -177,8 +177,8 @@ function runTests() {
     	logStart('Test: measureUnitCollection find pair. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
-    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
+    		collection.append( new measureUnit( {name: ['grams'], value:1} ) );
     		if( collection.count() != 2 ) {
     			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
     			return false;
@@ -199,10 +199,10 @@ function runTests() {
     						if( !(pair.to instanceof measureUnit) ) {
     							logEnd('FAIL! pair.to is not a measureUnit')
     						} else {
-    							if(pair.from.name!='kilograms') {
+    							if( !pair.from.match('kilograms') ) {
     								logEnd('FAIL! pair.from is not kilograms, is ' + pair.from.name );
     							} else {
-    								if(pair.to.name!='grams') {
+    								if( !pair.to.match('grams')) {
     									logEnd('FAIL! pair.to is not kilograms, is ' + pair.to.name );
     								} else {
     									logEnd('OK! found the pair!');
@@ -215,7 +215,7 @@ function runTests() {
     		}
     	} catch(e) {
     		if( e instanceof measureException ) {
-    			logEnd('OK! Controled exception "' + e.message + '"');
+    			logEnd('FAIL! Controled exception "' + e.message + '"');
     		} else {
     			logEnd('FAIL! '+ e.message );
     		}
@@ -223,11 +223,11 @@ function runTests() {
     }
     
     const testMeasureItemCollectionFindPairFromNotFound = function () {
-    	logStart('Test: measureUnitCollection find pair. Result: ');
+    	logStart('Test: measureUnitCollection find pair FROM not found. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
-    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
+    		collection.append( new measureUnit( {name: ['grams'], value:1} ) );
     		if( collection.count() != 2 ) {
     			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
     			return false;
@@ -236,14 +236,14 @@ function runTests() {
     		if( pair == null ) {
     			logEnd('FAIL! pair is null');
     		} else {
-    			if( (pair.from == null) && (pair.to != null) && (pair.to instanceof measureUnit) && (pair.to.name == 'grams') ) {
+    			if( (pair.from == null) && (pair.to != null) && (pair.to instanceof measureUnit) && (pair.to.match('grams') ) ) {
     				logEnd('OK! pair.from is null AND pair.to is measureUnit for grams');
     			} else {
     				if( pair.from != null ) {
     					logEnd('FAIL! pair.from should be NULL and isn\'t');
     				} else {
     					if( pair.to == null ) {
-    						logEnd('FAIL! pair.to should be and object and is NULL');
+    						logEnd('FAIL! pair.to should be an object and is NULL');
     					} else {
     						if( !(pair.to instanceof measureUnit) ) {
     							logEnd('FAIL! pair.to is not a measureUnit');
@@ -256,7 +256,7 @@ function runTests() {
     		}
     	} catch(e) {
     		if( e instanceof measureException ) {
-    			logEnd('OK! Controled exception "' + e.message + '"');
+    			logEnd('FAIL! Controled exception "' + e.message + '"');
     		} else {
     			logEnd('FAIL! '+ e.message );
     		}
@@ -264,11 +264,11 @@ function runTests() {
     }
     
     const testMeasureItemCollectionFindPairToNotFound = function() {
-    	logStart('Test: measureUnitCollection find pair. Result: ');
+    	logStart('Test: measureUnitCollection find pair TO not found. Result: ');
     	try {
     		let collection = new measureUnitCollection();
-    		collection.append( new measureUnit( {name: 'kilograms', value:1000} ) );
-    		collection.append( new measureUnit( {name: 'grams', value:1} ) );
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
+    		collection.append( new measureUnit( {name: ['grams'], value:1} ) );
     		if( collection.count() != 2 ) {
     			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
     			return false;
@@ -277,14 +277,14 @@ function runTests() {
     		if( pair == null ) {
     			logEnd('FAIL! pair is null');
     		} else {
-    			if( (pair.to == null) && (pair.from != null) && (pair.from instanceof measureUnit) && (pair.from.name == 'grams') ) {
+    			if( (pair.to == null) && (pair.from != null) && (pair.from instanceof measureUnit) && (pair.from.match('grams')) ) {
     				logEnd('OK! pair.to is null AND pair.from is measureUnit for grams');
     			} else {
     				if( pair.to != null ) {
     					logEnd('FAIL! pair.to should be NULL and isn\'t');
     				} else {
     					if( pair.from == null ) {
-    						logEnd('FAIL! pair.from should be and object and is NULL');
+    						logEnd('FAIL! pair.from should be an object and is NULL');
     					} else {
     						if( !(pair.from instanceof measureUnit) ) {
     							logEnd('FAIL! pair.from is not a measureUnit');
@@ -297,7 +297,48 @@ function runTests() {
     		}
     	} catch(e) {
     		if( e instanceof measureException ) {
-    			logEnd('OK! Controled exception "' + e.message + '"');
+    			logEnd('FAIL! Controled exception "' + e.message + '"');
+    		} else {
+    			logEnd('FAIL! '+ e.message );
+    		}
+    	}
+    }
+    
+    const testMeasureItemCollectionFindPairFromAndToTheSame = function() {
+    	logStart('Test: measureUnitCollection find pair with the same values. Result: ');
+    	try {
+    		let collection = new measureUnitCollection();
+    		collection.append( new measureUnit( {name: ['kilograms'], value:1000} ) );
+    		collection.append( new measureUnit( {name: ['grams'], value:1} ) );
+    		if( collection.count() != 2 ) {
+    			logEnd('FAIL! List should have two objects and has ' + String(collection.count()));
+    			return false;
+    		}
+    		let pair = collection.findPair('grams','grams');
+    		if( pair == null ) {
+    			logEnd('FAIL! pair is null');
+    		} else {
+    			if( (pair.to != null) && (pair.from != null) && (pair.to instanceof measureUnit) && (pair.from instanceof measureUnit) && (pair.from.match( 'grams' )) && (pair.to.match('grams') ) ) {
+    				logEnd('OK! pair.to is grams AND pair.from is measureUnit for grams');
+    			} else {
+    				if( pair.to == null ) {
+    					logEnd('FAIL! pair.to should be and object and is NULL');
+    				} else {
+    					if( pair.from == null ) {
+    						logEnd('FAIL! pair.from should be an object and is NULL');
+    					} else {
+    						if( !(pair.from instanceof measureUnit) ) {
+    							logEnd('FAIL! pair.from is not a measureUnit');
+    						} else {
+    							logEnd('FAIL! Something unexpected returned');
+    						}
+    					}
+    				}    				
+    			}
+    		}
+    	} catch(e) {
+    		if( e instanceof measureException ) {
+    			logEnd('FAIL! Controled exception "' + e.message + '"');
     		} else {
     			logEnd('FAIL! '+ e.message );
     		}
@@ -426,8 +467,9 @@ function runTests() {
     	}
     }
     
-    //TODO test measureUnits if is the same unit with different name
-    //TODO test different names
+    const testConvertSameUnit = function() {
+
+    }
     
     testMeasureUnitConstructorWithoutParams();
     testMeasureUnitConstructorWithWrongParams();    
@@ -443,6 +485,7 @@ function runTests() {
     testMeasureUnitCollectionAppendUnitTwiceDifferentValues();
     testMeasureItemCollectionFindPairFromNotFound();
     testMeasureItemCollectionFindPairToNotFound();
+    testMeasureItemCollectionFindPairFromAndToTheSame();
     testMeasureUnitCollectionFindPair();
     
     testMeasureConverterCreate();

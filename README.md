@@ -51,4 +51,56 @@ miles = convertjs( 10, 'kilometers', 'miles' );
         * farenheit
         * kelvin
     
-* v0.3 - not reached - Adding sinonims. Eg: g = = gr = = grams.
+* v0.3 - reached 2018.09.29 - Use of synonyms. This allos us to treat the unit, its plural and reduced notations. i.e: (meter, meters, m). Also added some units.
+    * __distance__
+        * foot
+        * mile
+        * yerd
+        * league
+        * fathom
+        * nautical mile
+        * chain
+        * rod
+        * astronomical unit
+        * light year
+        * parsec
+        * football field
+    * __distance (ancient)__ 
+        * egyptian cubit
+        * mesopotanian cubit
+        * biblical cubit
+        * δάκτυλος
+        * κόνδυλος
+        * δῶρον
+        * διχάς
+        * λιχάς
+        * ὀρθόδωρον
+        * σπιθαμή
+        * πούς
+        * πυγμή
+        * πυγών
+        * πῆχυς
+        * ἁπλοῦν βῆμα
+        * βῆμα
+        * ὄργυια
+        * κάλαμος
+        * ἅμμα
+        * πλέθρον
+        * στάδιον
+        * δίαυλος
+        * ἱππικόν
+        * μίλιον
+        * δόλιχος
+        * παρασάγγες
+        * σχοινός
+        * roman cubit
+        * roman ulna
+        * roman mile
+        * vara
+    * __weight (ancient)__
+        * ὀβολός
+        * δραχμή
+        * μνᾶ
+        * τάλαντον
+* v0.4 - not reached - adding multilanguage capabilities
+        

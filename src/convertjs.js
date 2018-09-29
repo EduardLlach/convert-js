@@ -103,7 +103,7 @@ class measureUnit {
 class measureUnitCollection {
 	
     /**
-     * Appends an unit to the list. Ex: distances.append( new measureUnit( {name:'kilometers',value:1000} ) );
+     * Appends an unit to the list. Ex: lengths.append( new measureUnit( {name:'kilometers',value:1000} ) );
      * if the unit does not exists, simply add it
      * if it exists and have the same value, omit it
      * if it exists and have different value, we have a problem.
@@ -123,7 +123,7 @@ class measureUnitCollection {
         if( existingMeasure == null ) {
             this._list.push( unit );
         } else {
-        	if( existingMeasure.value != unit.value ) throw new measureException(`Unit already exists and has a different value ${existingMeasure.value} vs ${unit.value}`);
+        	if( existingMeasure.value != unit.value ) throw new measureException(`Unit ${unit.name[0]} already exists and has a different value ${existingMeasure.value} vs ${unit.value}`);
         }
     }
     
@@ -141,7 +141,7 @@ class measureUnitCollection {
     }
     
     /**
-     * find an unit by name. Ex: distances.find('kilometers')
+     * find an unit by name. Ex: lengths.find('kilometers')
      * @param String measureName name of the measure we want to find
      * @returns measureUnit or null if not found
      */
@@ -166,10 +166,13 @@ class measureUnitCollection {
     	
     	for( let measure of this._list ) {
     		if( !(measure instanceof measureUnit) ) throw new measureException("Found something that is not a measureUnit");
-    		//TODO this code will never match if the units are the same
+    		
     		if( measure.match( measureNameFrom ) ) {
     			result.from = measure;
-    		} else if ( measure.match( measureNameTo ) ) {
+    		}
+    		//we separate this instead to put in a "else" to allow to find "from" and "to" with the same unit.
+    		//It's absurd? Yeah, but not something that has to throw an exception.
+    		if ( measure.match( measureNameTo ) ) {
     			result.to = measure;
     		}
     		
@@ -206,24 +209,74 @@ class measureConverter {
 	
 	constructor() {
 		this.collections = new Array();
-		this.append( 'distanceCollection' );
+		this.append( 'lengthCollection' );
 		this.append( 'weightCollection' );	
 		this.append( 'volumeCollection' );
 		this.append( 'temperatureCollection' );
 		
-		this.populateDistanceUnits();
+		this.populateLengthUnits();
 		this.populateWeightUnits();
 		this.populateVolumeUnits();
 		this.populateTemperatureUnits();
 	}
 	
-	populateDistanceUnits() {
-		let distanceCollection = this.findCollection('distanceCollection');
-		distanceCollection.append( new measureUnit({name:['milimeter','milimeters','mm'],value:0.001}) );
-		distanceCollection.append( new measureUnit({name:['centimeter','centimeters','cm'],value:0.01}) );
-		distanceCollection.append( new measureUnit({name:['decimeter','decimeters','dm'],value:0.1}) );
-		distanceCollection.append( new measureUnit({name:['meter','meters','m'],value:1}) );
-		distanceCollection.append( new measureUnit({name:['kilometer','kilometers','km'],value:1000}) );
+	populateLengthUnits() {
+		let lengthCollection = this.findCollection('lengthCollection');
+		lengthCollection.append( new measureUnit({name:['milimeter','milimeters','mm'],value:0.001}) );
+		lengthCollection.append( new measureUnit({name:['centimeter','centimeters','cm'],value:0.01}) );
+		lengthCollection.append( new measureUnit({name:['decimeter','decimeters','dm'],value:0.1}) );
+		lengthCollection.append( new measureUnit({name:['meter','meters','m'],value:1}) );
+		lengthCollection.append( new measureUnit({name:['kilometer','kilometers','km'],value:1000}) );
+		lengthCollection.append( new measureUnit({name:['inch','inches'],value:0.0254}) );
+		lengthCollection.append( new measureUnit({name:['foot','feet'],value:0.3048}) );
+		lengthCollection.append( new measureUnit({name:['mile','miles'],value:1610}) );
+		lengthCollection.append( new measureUnit({name:['yard','yards'],value:0.91}) );
+		lengthCollection.append( new measureUnit({name:['league','league'],value:4800}) );
+		lengthCollection.append( new measureUnit({name:['fathom','fathoms'],value:1.8288}) );
+		lengthCollection.append( new measureUnit({name:['nautical mile','nautical miles'],value:1852}) );
+		lengthCollection.append( new measureUnit({name:['chain','chains'],value:20.1186}) );
+		lengthCollection.append( new measureUnit({name:['rod','rods','pole','poles','perch','perches'],value:5.0292}) );
+		lengthCollection.append( new measureUnit({name:['astronomical unit','astronomical units','au','ua'],value:149597870700}) );
+		lengthCollection.append( new measureUnit({name:['light year','light years','ly'],value:9460730472580800}) );
+		lengthCollection.append( new measureUnit({name:['parsec','parsecs'],value:30856775814671900}) );
+		lengthCollection.append( new measureUnit({name:['football field','football fields'],value:110}) );		
+		//Egyptian
+		lengthCollection.append( new measureUnit({name:['egyptian cubit','egyptian cubits'],value:0.5235}) );
+		//Mesopotamian
+		lengthCollection.append( new measureUnit({name:['mesopotanian cubit','mesopotanian cubits'],value:0.5186}) );
+		//Biblical
+		lengthCollection.append( new measureUnit({name:['biblical cubit','biblical cubits'],value:0.457}) );
+		//Ancient Greek
+		lengthCollection.append( new measureUnit({name:['daktylos','δάκτυλος','daktyloi'],value:0.0193}) );//finger
+		lengthCollection.append( new measureUnit({name:['kondylos','κόνδυλος','knodyloi'],value:0.0385}) );//2 fingers
+		lengthCollection.append( new measureUnit({name:['palaistē','dōron','palaiste','doron','παλαιστή','δῶρον'],value:0.0771}) );//4 fingers
+		lengthCollection.append( new measureUnit({name:['dichas','hēmipodion','hemipodion','διχάς','ἡμιπόδιον'],value:0.1541}) );//8 fingers
+		lengthCollection.append( new measureUnit({name:['lichas','λιχάς'],value:0.1926}) ); //10 fingers
+		lengthCollection.append( new measureUnit({name:['orthodōron','orthodoron','ὀρθόδωρον'],value:0.1541}) );//11 fingers
+		lengthCollection.append( new measureUnit({name:['spithamē','spithame','σπιθαμή'],value:0.2312}) );//12 finger
+		lengthCollection.append( new measureUnit({name:['pous','πούς'],value:0.3082}) );//16 fingers
+		lengthCollection.append( new measureUnit({name:['pygmē','pygme','πυγμή'],value:0.3468}) );//18 fingers	
+		lengthCollection.append( new measureUnit({name:['pygōn','pygon','πυγών'],value:0.3853}) );//20 finger
+		lengthCollection.append( new measureUnit({name:['greek cubit','greek cubits','pēchys','pechys','πῆχυς'],value:0.46}) );
+		lengthCollection.append( new measureUnit({name:['haploun bēma','haploun bema','ἁπλοῦν βῆμα'],value:0.77}) );
+		lengthCollection.append( new measureUnit({name:['bēma','bema','diploun bēma','diploun bema','βῆμα','διπλοῦν βῆμα'],value:1.54}) );
+		lengthCollection.append( new measureUnit({name:['orgyia','ὄργυια'],value:1.85}) );
+		lengthCollection.append( new measureUnit({name:['kalamos','akaina','dekapous','κάλαμος','ἄκαινα','δεκάπους'],value:3.08}) );
+		lengthCollection.append( new measureUnit({name:['hamma','ἅμμα'],value:18.5}) );
+		lengthCollection.append( new measureUnit({name:['plethron','πλέθρον'],value:30.8}) );
+		lengthCollection.append( new measureUnit({name:['stadion','stdia','στάδιον'],value:184.9}) );
+		lengthCollection.append( new measureUnit({name:['diaulos','δίαυλος'],value:369.9}) );
+		lengthCollection.append( new measureUnit({name:['hippikon','ἱππικόν'],value:739.7}) );
+		lengthCollection.append( new measureUnit({name:['milion','μίλιον'],value:1479}) );
+		lengthCollection.append( new measureUnit({name:['dolichos','δόλιχος'],value:2219}) );
+		lengthCollection.append( new measureUnit({name:['parasanges','παρασάγγες'],value:5548}) );
+		lengthCollection.append( new measureUnit({name:['schoinos','σχοινός'],value:7397}) );
+		//Ancient Rome
+		lengthCollection.append( new measureUnit({name:['roman cubit','roman cubits'],value:0.444}) );
+		lengthCollection.append( new measureUnit({name:['roman ulna','roman ulnas'],value:1.20}) );
+		lengthCollection.append( new measureUnit({name:['roman mile','roman miles'],value:1479}) );
+		//Middle Ages
+		lengthCollection.append( new measureUnit({name:['vara','varas','vares'],value:1.57}) ); //Crown of Aragon
 	}
 	
 	populateWeightUnits() {
@@ -236,6 +289,11 @@ class measureConverter {
 		weightCollection.append( new measureUnit({name:['hectogram','hectograms'],value:10}));
 		weightCollection.append( new measureUnit({name:['kilogram','kilograms','kg','kgr'],value:1000}));
 		weightCollection.append( new measureUnit({name:['ton','tons','tm'],value:1000000}));
+		//Ancient Greek (Attic/Euboic)
+		weightCollection.append( new measureUnit({name:['obol','obolus','obols','ὀβολός'],value:0.72}));
+		weightCollection.append( new measureUnit({name:['drachma','drachmae','δραχμή'],value:4.31}));
+		weightCollection.append( new measureUnit({name:['mina','minae','μνᾶ'],value:431}));
+		weightCollection.append( new measureUnit({name:['talent','τάλαντον'],value:25860}));
 	}
 	
 	populateVolumeUnits() {
@@ -296,8 +354,13 @@ class measureConverter {
 		}
 
 		if( (pair != null) && (pair.from != null) && (pair.to != null) ) {
-			//TODO if pair.to is the same than pair.from, skip conversion
-			return pair.to.fromBase( pair.from.toBase( value ) );
+			//TODO: By now we skip calculating the conversion if the value is the same
+			//But with units calculated by functions this won't work.
+			if( (pair.from.value != 0) && (pair.from.value==pair.to.value)  ) {
+				return value;
+			} else {
+				return pair.to.fromBase( pair.from.toBase( value ) );
+			}
 		} else {
 			if( pair==null ) {
 				throw new measureException("Something happened and we didn't searched the collections")
